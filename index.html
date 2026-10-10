@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A little message for you 💌</title>
+<style>
+  :root{--rose:#e96b91;--ink:#503846;--cream:#fff8fa;--pink:#ffe3ec;--muted:#8b7180}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 15% 15%,#fff 0 5%,transparent 28%),linear-gradient(135deg,#fff5f8,#ffe2eb 55%,#fff4f7);font-family:ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);overflow-x:hidden}
+  .float{position:fixed;opacity:.45;pointer-events:none;animation:drift 7s ease-in-out infinite;font-size:24px}.f1{top:8%;left:8%}.f2{top:18%;right:9%;animation-delay:1s}.f3{bottom:12%;left:12%;animation-delay:2s}.f4{bottom:9%;right:10%;animation-delay:3s}
+  @keyframes drift{50%{transform:translateY(-14px) rotate(8deg)}}
+  .card{width:min(100%,490px);background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.9);box-shadow:0 24px 70px rgba(159,76,108,.16);border-radius:28px;padding:clamp(26px,7vw,42px);text-align:center;backdrop-filter:blur(12px);position:relative}
+  .stamp{width:64px;height:64px;border-radius:22px;background:var(--pink);display:grid;place-items:center;margin:0 auto 22px;font-size:30px;transform:rotate(-5deg)}
+  .eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--rose);font-weight:800;margin-bottom:12px}
+  h1{font-size:clamp(26px,6vw,34px);line-height:1.2;margin:0 0 16px;letter-spacing:-.7px} p{font-size:16px;line-height:1.7;color:#795e6c;margin:0 auto 24px;white-space:pre-line}
+  .buttons{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin-top:25px}.btn{border:0;border-radius:15px;padding:14px 19px;font:700 15px inherit; font-size:15px;font-weight:750;cursor:pointer;transition:transform .18s,box-shadow .18s;min-width:125px}.btn:hover{transform:translateY(-2px);box-shadow:0 9px 20px #d67b9933}.primary{background:var(--rose);color:white}.secondary{background:#fff0f5;color:#9d4967;border:1px solid #f8d1df}.quiet{display:block;margin:22px auto 0;background:transparent;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+  .progress{height:4px;background:#f9e6ed;border-radius:9px;margin:0 0 27px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,#ef91ad,#d95c86);width:12%;border-radius:9px;transition:width .3s}
+  .tiny{font-size:12px;color:#a88c9a;margin-top:23px}.heart{color:var(--rose)}
+  @media(max-width:400px){.card{padding:25px 20px}.btn{min-width:110px;flex:1}}
+</style>
+</head>
+<body>
+<div class="float f1">♡</div><div class="float f2">✦</div><div class="float f3">♡</div><div class="float f4">✧</div>
+<main class="card" aria-live="polite">
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="stamp" id="icon">💌</div>
+  <div class="eyebrow" id="eyebrow">a tiny message for you</div>
+  <h1 id="title">Hey you… 🥺</h1>
+  <p id="message">I have something to ask you.
+No pressure, okay? ❤️</p>
+  <div class="buttons" id="buttons"><button class="btn primary" onclick="start()">Okay, tell me →</button></div>
+  <button class="quiet" id="restart" onclick="render('start')" hidden>Start again</button>
+  <div class="tiny">made with a little courage & a lot of care <span class="heart">♥</span></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function setScreen(icon,eyebrow,title,message,buttons,step){
+  $('icon').textContent=icon;$('eyebrow').textContent=eyebrow;$('title').textContent=title;$('message').textContent=message;
+  $('buttons').innerHTML='';buttons.forEach(b=>{const el=document.createElement('button');el.className='btn '+(b.kind||'secondary');el.textContent=b.text;el.onclick=b.action;$('buttons').appendChild(el)});
+  $('bar').style.width=step+'%';$('restart').hidden=step<95;
+}
+function start(){render('q1')}
+function render(s){
+ const apology='I’m sorryyyy. 🥺🤍\n\nJust know that you matter to me, and it was never intentional. I never wanted to make you feel ignored, and I’m genuinely sorry if I made you feel that way.';
+ const screens={
+ start:()=>setScreen('💌','a tiny message for you','Hey you… 🥺','I have something to ask you.\nNo pressure, okay? ❤️',[{text:'Okay, tell me →',kind:'primary',action:start}],8),
+ q1:()=>setScreen('🥺','question 1','Are you angry with me?','Be honest… ❤️‍🩹',[{text:'Yes 😒',action:()=>render('yes1')},{text:'No ❤️',kind:'primary',action:()=>render('no1')}],22),
+ yes1:()=>setScreen('❤️‍🩹','I hear you','Yeah… I know you’re angry, and I know I hurt you.','I’m genuinely sorry for that. 🥺\n\nBut tell me… are you still angry with me?',[{text:'Yes, still 😒',action:()=>render('still')},{text:'A little 🥺',action:()=>render('still')},{text:'Not anymore ❤️',kind:'primary',action:()=>render('tease')}],42),
+ still:()=>setScreen('🤍','I understand','That’s okay. Take your time.','I won’t force you to stop being angry. I just wanted you to know that I’m sorry. ❤️‍🩹',[{text:'One last thing? →',kind:'primary',action:()=>render('tease')}],58),
+ no1:()=>setScreen('🤍','oh, okay…','I’m glad you’re not angry. 🥹','I still wanted to say I’m sorry, because you matter to me. 🤍',[{text:'One last thing? →',kind:'primary',action:()=>render('tease')}],48),
+ tease:()=>setScreen('🫶','okay, one last thing','Can we go back to annoying each other now? 😂🤍','',[{text:'Yesss 😂',kind:'primary',action:()=>render('endyes')},{text:'Not yet 😤',action:()=>render('malkin')}],72),
+ malkin:()=>setScreen('🥹','uh oh…','Malkin zyaada hi gussa hai lagta hai 😭😂','',[{text:'Haan toh 😤',action:()=>render('apology')},{text:'Nhi nhi 😂',kind:'primary',action:()=>render('knew')}],84),
+ apology:()=>setScreen('🤍','I’m sorry, malkin','I’m sorryyyy. 🥺🤍', 'Just know that you matter to me, and it was never intentional. I never wanted to make you feel ignored, and I’m genuinely sorry if I made you feel that way.',[{text:'Okay 🤍',kind:'primary',action:()=>render('end')}],100),
+ knew:()=>setScreen('😂','I knew ittt','I knew ittt 😭😂','Sorryyyy!! 🥹🤍',[{text:'Okay, okay 😂',kind:'primary',action:()=>render('end')}],100),
+ endyes:()=>setScreen('🤍','yay… a little peace','Hehe, thank youuu 😂🤍','I’m sorryyyy. 🥺\n\nJust know that you matter to me, and it was never intentional. I never wanted to make you feel ignored, and I’m genuinely sorry if I made you feel that way.',[{text:'Start again ↺',kind:'primary',action:()=>render('start')}],100),
+ end:()=>setScreen('🤍','one last thing','I’m sorryyyy. 🥺🤍',apology,[{text:'Read it again ↺',kind:'primary',action:()=>render('start')}],100)
+ };
+ (screens[s]||screens.start)();
+}
+</script>
+</body>
+</html>
